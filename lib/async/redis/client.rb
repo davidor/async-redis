@@ -53,6 +53,7 @@ module Async
 			
 			attr :endpoint
 			attr :protocol
+			attr_accessor :pool
 			
 			# @return [client] if no block provided.
 			# @yield [client, task] yield the client in an async task.

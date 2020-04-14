@@ -2,7 +2,7 @@
 
 module Async
 	module Redis
-		class SentinelsClient < Client
+		class SentinelsClient < SimpleDelegator
 			def initialize(master_name, sentinels, role = :master, protocol = Protocol::RESP2, **options)
 				@master_name = master_name
 				@sentinel_endpoints = sentinels.map do |sentinel|
@@ -11,7 +11,12 @@ module Async
 				@role = role
 
 				@protocol = protocol
-				@pool = connect(**options)
+
+				client = Client.new(nil, protocol)
+				client.pool = connect(**options)
+
+				# Delegate all calls to @client
+				self.__setobj__(client)
 			end
 
 			private
